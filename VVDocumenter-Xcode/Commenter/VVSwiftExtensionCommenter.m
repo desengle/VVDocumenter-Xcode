@@ -1,9 +1,8 @@
 //
-//  Argument.h
+//  VVSwiftExtensionCommenter.m
 //  VVDocumenter-Xcode
-
 //
-//  Created by 王 巍 on 13-7-19.
+//  Created by WANG WEI on 2015/06/17.
 //
 //  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
 //
@@ -25,9 +24,17 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#import <Foundation/Foundation.h>
+#import "VVSwiftExtensionCommenter.h"
 
-@interface VVArgument : NSObject
-@property (nonatomic, copy) NSString *type;
-@property (nonatomic, copy) NSString *name;
+@implementation VVSwiftExtensionCommenter
+-(NSString *) document
+{
+    NSArray *component = [[self.code stringByReplacingOccurrencesOfString:@"{" withString:@""] componentsSeparatedByString:@":"];
+    NSString *description = @"Description";
+    if (component.count == 2) {
+        description = [component.lastObject stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    }
+    
+    return [NSString stringWithFormat:@"// MARK: - <#%@#>", description];
+}
 @end

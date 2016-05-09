@@ -1,9 +1,8 @@
 //
-//  Argument.h
+//  VVWorkspaceManager.h
 //  VVDocumenter-Xcode
-
 //
-//  Created by 王 巍 on 13-7-19.
+//  Created by 夏天味道 on 15/6/25.
 //
 //  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
 //
@@ -27,7 +26,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface VVArgument : NSObject
-@property (nonatomic, copy) NSString *type;
-@property (nonatomic, copy) NSString *name;
+@interface VVWorkspaceManager : NSObject
+
++ (id)workspaceForKeyWindow;
+
++ (NSString *)currentWorkspaceDirectoryPath;
++ (NSString *)directoryPathForWorkspace:(id)workspace;
+
 @end

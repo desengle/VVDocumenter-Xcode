@@ -1,9 +1,8 @@
 //
-//  Argument.h
+//  VVSwiftExtensionCommenter.h
 //  VVDocumenter-Xcode
-
 //
-//  Created by 王 巍 on 13-7-19.
+//  Created by WANG WEI on 2015/06/17.
 //
 //  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
 //
@@ -25,9 +24,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#import <Foundation/Foundation.h>
+#import "VVBaseCommenter.h"
 
-@interface VVArgument : NSObject
-@property (nonatomic, copy) NSString *type;
-@property (nonatomic, copy) NSString *name;
+@interface VVSwiftExtensionCommenter : VVBaseCommenter
+
 @end

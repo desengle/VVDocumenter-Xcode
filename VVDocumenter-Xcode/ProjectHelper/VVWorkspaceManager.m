@@ -1,9 +1,8 @@
 //
-//  Argument.h
+//  VVWorkspaceManager.m
 //  VVDocumenter-Xcode
-
 //
-//  Created by 王 巍 on 13-7-19.
+//  Created by 夏天味道 on 15/6/25.
 //
 //  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
 //
@@ -25,9 +24,38 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#import <Foundation/Foundation.h>
+#import "VVWorkspaceManager.h"
 
-@interface VVArgument : NSObject
-@property (nonatomic, copy) NSString *type;
-@property (nonatomic, copy) NSString *name;
+@implementation VVWorkspaceManager
+
++ (NSString *)currentWorkspaceDirectoryPath
+{
+    return [self directoryPathForWorkspace:[self workspaceForKeyWindow]];
+}
+
++ (NSString *)directoryPathForWorkspace:(id)workspace
+{
+    NSString *workspacePath = [[workspace valueForKey:@"representingFilePath"] valueForKey:@"_pathString"];
+    return [workspacePath stringByDeletingLastPathComponent];
+}
+
+#pragma mark - Private
+
++ (id)workspaceForKeyWindow
+{
+    return [self workspaceForWindow:[NSApp keyWindow]];
+}
+
++ (id)workspaceForWindow:(NSWindow *)window
+{
+    NSArray *workspaceWindowControllers = [NSClassFromString(@"IDEWorkspaceWindowController") valueForKey:@"workspaceWindowControllers"];
+    
+    for (id controller in workspaceWindowControllers) {
+        if ([[controller valueForKey:@"window"] isEqual:window]) {
+            return [controller valueForKey:@"_workspace"];
+        }
+    }
+    return nil;
+}
+
 @end

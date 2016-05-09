@@ -3,8 +3,26 @@
 //  VVDocumenter-Xcode
 //
 //  Created by 王 巍 on 13-8-3.
-//  Copyright (c) 2013年 OneV's Den. All rights reserved.
 //
+//  Copyright (c) 2015 Wei Wang <onevcat@gmail.com>
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
 
 #import "VVDSettingPanelWindowController.h"
 #import "VVDocumenterSetting.h"
@@ -17,11 +35,12 @@
 
 @property (weak) IBOutlet NSStepper *stepperCount;
 
+@property (weak) IBOutlet NSMatrix *mtxSinceOptions;
 @property (weak) IBOutlet NSMatrix *mtxPrefixOptions;
 @property (weak) IBOutlet NSButtonCell *btnPrefixWithWhitespace;
 @property (weak) IBOutlet NSButtonCell *btnPrefixWithStar;
 @property (weak) IBOutlet NSButtonCell *btnPrefixWithSlashes;
-@property (assign) IBOutlet NSButton *btnAddSinceToComment;
+@property (weak) IBOutlet NSButton *btnAddSinceToComment;
 @property (weak) IBOutlet NSButton *btnBriefDescription;
 @property (weak) IBOutlet NSButton *btnUseHeaderDoc;
 @property (weak) IBOutlet NSButton *btnBlankLinesBetweenSections;
@@ -30,6 +49,7 @@
 @property (weak) IBOutlet NSButton *btnUseDateInformation;
 @property (weak) IBOutlet NSTextField *tfAuthoInformation;
 @property (weak) IBOutlet NSTextField *tfDateInformaitonFormat;
+@property (weak) IBOutlet NSTextField *tfSinceVersion;
 
 @end
 
@@ -54,6 +74,11 @@
     self.btnUseSpaces.state = (NSCellStateValue)[[VVDocumenterSetting defaultSetting] useSpaces];
 
     self.btnAddSinceToComment.state = (NSCellStateValue)[[VVDocumenterSetting defaultSetting] addSinceToComments];
+    self.mtxSinceOptions.enabled = [[VVDocumenterSetting defaultSetting] addSinceToComments];
+    [self.mtxSinceOptions selectCellAtRow:(NSInteger)[[VVDocumenterSetting defaultSetting] sinceOption] column:0];
+    self.tfSinceVersion.enabled = [[VVDocumenterSetting defaultSetting] addSinceToComments];
+    self.tfSinceVersion.stringValue = [[VVDocumenterSetting defaultSetting] sinceVersion];
+
     self.btnBriefDescription.state = (NSCellStateValue)[[VVDocumenterSetting defaultSetting] briefDescription];
     self.btnUseHeaderDoc.state = (NSCellStateValue)[[VVDocumenterSetting defaultSetting] useHeaderDoc];
     self.btnBlankLinesBetweenSections.state = (NSCellStateValue)[[VVDocumenterSetting defaultSetting] blankLinesBetweenSections];
@@ -82,6 +107,7 @@
     self.tfTrigger.delegate = self;
     self.tfDateInformaitonFormat.delegate = self;
     self.tfAuthoInformation.delegate = self;
+    self.tfSinceVersion.delegate = self;
 }
 
 - (IBAction)stepperPressed:(id)sender {
@@ -96,6 +122,7 @@
     [[VVDocumenterSetting defaultSetting] setPrefixWithStar:YES];
     [[VVDocumenterSetting defaultSetting] setPrefixWithSlashes:NO];
     [[VVDocumenterSetting defaultSetting] setAddSinceToComments:NO];
+    [[VVDocumenterSetting defaultSetting] setSinceVersion:@""];
     [[VVDocumenterSetting defaultSetting] setBriefDescription:NO];
     [[VVDocumenterSetting defaultSetting] setUseHeaderDoc:NO];
     [[VVDocumenterSetting defaultSetting] setBlankLinesBetweenSections:YES];
@@ -111,6 +138,8 @@
     self.btnPrefixWithStar.state = NSOnState;
     self.btnPrefixWithSlashes.state = NSOffState;
     self.btnAddSinceToComment.state = NSOffState;
+    self.tfSinceVersion.enabled = NO;
+    self.mtxSinceOptions.enabled = NO;
     self.btnBriefDescription.state = NSOffState;
     [self.tfTrigger setStringValue:VVDDefaultTriggerString];
     self.btnUseHeaderDoc.state = NSOffState;
@@ -127,6 +156,11 @@
 
 }
 
+- (IBAction)mtxSinceOptionPressed:(id)sender {
+    VVDSinceOption option = self.mtxSinceOptions.selectedRow;
+    [[VVDocumenterSetting defaultSetting] setSinceOption:option];
+}
+
 - (IBAction)btnUseSpacesPressed:(id)sender {
     [[VVDocumenterSetting defaultSetting] setUseSpaces:self.btnUseSpaces.state];
     [self updateUseSpace:self.btnUseSpaces.state];
@@ -140,7 +174,10 @@
 }
 
 - (IBAction)btnAddSinceToCommentsPressed:(id)sender {
-    [[VVDocumenterSetting defaultSetting] setAddSinceToComments:self.btnAddSinceToComment.state];
+    BOOL enableSince = self.btnAddSinceToComment.state;
+    [[VVDocumenterSetting defaultSetting] setAddSinceToComments:enableSince];
+    self.tfSinceVersion.enabled = enableSince;
+    self.mtxSinceOptions.enabled = enableSince;
 }
 
 - (IBAction)btnBriefDescriptionPressed:(id)sender {
@@ -179,6 +216,9 @@
     }
     if([notification object] == self.tfDateInformaitonFormat) {
         [[VVDocumenterSetting defaultSetting] setDateInformationFormat:self.tfDateInformaitonFormat.stringValue];
+    }
+    if ([notification object] == self.tfSinceVersion) {
+        [[VVDocumenterSetting defaultSetting] setSinceVersion:self.tfSinceVersion.stringValue];
     }
 }
 
